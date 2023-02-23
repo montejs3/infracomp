@@ -1,42 +1,66 @@
 package proyecto;
+
 import java.util.Scanner;
-import java.util.ArrayList;
 
 public class Main {
 	
-	 try (Scanner scanner = new Scanner(System.in)) {
-         
-         System.out.println("Ingrese el tamaño de los buzones de inicio y de fin: ");
-         int sizeBuzonIniFini = scanner.nextInt();
+	private final static int ETAPAS = 3;
+	
 
-         System.out.println("Ingrese el tamaño de los buzones intermedios: ");
-         int sizeBuzonIntermedio = scanner.nextInt();
-
-         System.out.println("Ingrese la cantidad de subconjuntos: ");
-         int cantSubconjuntos = scanner.nextInt();
-
-         // creacion subconjuntos
-         ArrayList<String> subconjuntos = crearSubconjuntos(cantSubconjuntos);
-
-         // creacion buzones
-         Buzon buzonInicial = new Buzon(sizeBuzonIniFini);
-         Buzon buzonFinal = new Buzon(sizeBuzonIniFini);
-         Buzon[][] buzonesIntermedios = crearBuzonesIntermedios(sizeBuzonIntermedio);
-
-         // creacion procesos
-         ProcesoInicial procesoInicial = new ProcesoInicial(buzonInicial, subconjuntos);
-         ProcesoFinal procesoFinal = new ProcesoFinal(buzonFinal);
-         ProcesoIntermedio[][] procesosIntermedios = crearProcesoIntermedio(buzonInicial, buzonFinal, buzonesIntermedios);
-
-         // ejecucion procesos
-         procesoInicial.start();
-         for (int i = 0; i < 3; i++) {
-             for (int j = 0; j < 3; j++) {
-                 procesosIntermedios[i][j].start();
-             }
-         }
-         procesoFinal.start();
-     }
- }
+	
+	public static void main(String[] args) {
+		Scanner scanner = new Scanner(System.in);
+		System.out.println("Ingrese el número de procesos por etapa: " );
+		int procesosPorEtapa = scanner.nextInt();
+		System.out.println("Ingrese el número de productos que se deben crear: " );
+		int productosACrear = scanner.nextInt();
+		System.out.println("Ingrese el tamaño de los buzones (este tamaño no aplica para el último buzón): " );
+		int tamanoBuzon = scanner.nextInt();
+		scanner.close();
+		
+		
+		Buffer buzonFinal = new Buffer(Integer.MAX_VALUE,3);
+		
+		//procesoFinal = new ProcesoRojo(buzonFinal, procesosPorEtapa * productosACrear);
+		Buffer buzon1 = new Buffer(tamanoBuzon,1);
+		Buffer buzon2 = new Buffer(tamanoBuzon,2);
+	
+		
+		
+		
+		for (int i = 1; i <= ETAPAS; i++) {
+			
+			for (int j = 0; j < procesosPorEtapa; j++) {
+				if (i == 1) {
+					if(j == 0) {
+						new Proceso("naranja", Asignador.asignarIdProceso(),buzon1 , null, 1, productosACrear).start();
+						
+					}
+					else {
+						new Proceso("azul", Asignador.asignarIdProceso(),buzon1 , null, 1, productosACrear).start();
+					}
+				}
+				else if(i == 2) {
+					if(j == 0) {
+						new Proceso("naranja", Asignador.asignarIdProceso(),buzon2 , buzon1, 2, productosACrear).start();
+					}
+					else {
+						new Proceso("azul", Asignador.asignarIdProceso(),buzon2 , buzon1, 2, productosACrear).start();
+					}
+				}
+				else if(i == 3) {
+					if(j == 0) {
+						new Proceso("naranja", Asignador.asignarIdProceso(),buzonFinal , buzon2, 3, productosACrear).start();
+					}
+					else {
+						new Proceso("azul", Asignador.asignarIdProceso(),buzonFinal , buzon2, 3, productosACrear).start();
+					}
+				}
+			}
+		}
+		
+		
+		//procesoFinal.start();
+	}
 
 }

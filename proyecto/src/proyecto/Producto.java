@@ -2,18 +2,14 @@ package proyecto;
 
 public class Producto {
 	private int id;
-	private int color;
+	private String color;
 	
 	
 	
-	public Producto(int id, int color) {
+	public Producto(int id, String color) {
 		this.id = id;
 		this.color = color;
 	}	
 	
-	
-	public void run() {
-	
-	}
 	
 }
